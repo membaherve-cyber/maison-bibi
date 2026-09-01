@@ -1,8 +1,3 @@
-// Prisma schema for La Maison Bibi
-// Configured for PostgreSQL (Neon) production database.
-// Every column is mapped to its snake_case name so the existing raw SQL
-// (which uses snake_case identifiers) keeps working unchanged.
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -266,7 +261,7 @@ model Appointment {
   customerName  String   @map("customer_name")
   customerPhone String   @default("") @map("customer_phone")
   customerId    Int?     @map("customer_id")
-  propertyId    Int?     @map("property_id")
+    propertyId    Int?     @map("property_id")
   propertyTitle String   @default("") @map("property_title")
   scheduledAt   DateTime @map("scheduled_at")
   location      String   @default("")
