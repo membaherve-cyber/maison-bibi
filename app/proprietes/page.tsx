@@ -17,23 +17,19 @@ type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 const first = (value: string | string[] | undefined) =>
   (Array.isArray(value) ? value[0] : value) ?? "";
 
-export default async function PropertiesPage({
-  searchParams,
-}: {
+export default async function PropertiesPage(props: {
   searchParams: SearchParams;
 }) {
-  const [properties, params] = await Promise.all([
-    getAllProperties(),
-    searchParams,
-  ]);
+  const searchParams = await props.searchParams;
+  const properties = await getAllProperties();
 
   // Resolved server-side so the filtered grid is present in the initial HTML.
   const initialFilters = {
-    transaction: first(params.transaction),
-    type: first(params.type),
-    city: first(params.city),
-    neighborhood: first(params.neighborhood),
-    q: first(params.q),
+    transaction: first(searchParams.transaction),
+    type: first(searchParams.type),
+    city: first(searchParams.city),
+    neighborhood: first(searchParams.neighborhood),
+    q: first(searchParams.q),
   };
 
   return (
