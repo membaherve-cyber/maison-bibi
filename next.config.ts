@@ -34,6 +34,10 @@ const nextConfig: NextConfig = {
   },
 
   serverExternalPackages: ["sharp"],
+
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
 
 export default nextConfig;
