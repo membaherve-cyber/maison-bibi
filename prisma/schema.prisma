@@ -1,0 +1,366 @@
+// Prisma schema for La Maison Bibi
+// Configured for PostgreSQL (Neon) production database.
+// Every column is mapped to its snake_case name so the existing raw SQL
+// (which uses snake_case identifiers) keeps working unchanged.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  username     String    @unique
+  email        String    @default("")
+  name         String    @default("")
+  passwordHash String    @map("password_hash")
+  role         String    @default("agent")
+  phone        String    @default("")
+  avatar       String    @default("")
+  active       Boolean   @default(true)
+  lastLoginAt  DateTime? @map("last_login_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  @@map("users")
+}
+
+model PropertyCategory {
+  id          Int     @id @default(autoincrement())
+  name        String
+  slug        String  @unique
+  description String  @default("")
+  position    Int     @default(0)
+  published   Boolean @default(true)
+
+  @@map("property_categories")
+}
+
+model Location {
+  id           Int     @id @default(autoincrement())
+  region       String  @default("Littoral")
+  city         String  @default("Douala")
+  neighborhood String
+  slug         String  @unique
+  description  String  @default("")
+  latitude     String  @default("")
+  longitude    String  @default("")
+  published    Boolean @default(true)
+  position     Int     @default(0)
+
+  @@map("locations")
+}
+
+model Property {
+  id                Int      @id @default(autoincrement())
+  slug              String   @unique
+  reference         String   @default("")
+  title             String
+  titleEn           String   @default("") @map("title_en")
+  shortDescription  String   @default("") @map("short_description")
+  description       String   @default("")
+  descriptionEn     String   @default("") @map("description_en")
+  region            String   @default("Littoral")
+  city              String   @default("Douala")
+  neighborhood      String   @default("")
+  address           String   @default("")
+  latitude          String   @default("")
+  longitude         String   @default("")
+  propertyType      String   @map("property_type")
+  transactionType   String   @default("vente") @map("transaction_type")
+  availability      String   @default("disponible")
+  price             Int      @default(0)
+  currency          String   @default("FCFA")
+  pricePeriod       String   @default("") @map("price_period")
+  bedrooms          Int?
+  bathrooms         Int?
+  livingRooms       Int?     @map("living_rooms")
+  rooms             Int?
+  livingArea        Int?     @map("living_area")
+  landArea          Int?     @map("land_area")
+  floor             String   @default("")
+  buildYear         Int?     @map("build_year")
+  parkingSpaces     Int?     @map("parking_spaces")
+  condition         String   @default("")
+  amenities         String   @default("[]")
+  amenitiesEn       String   @default("[]") @map("amenities_en")
+  images            String   @default("[]")
+  featured          Boolean  @default(false)
+  verifiedLandTitle Boolean  @default(false) @map("verified_land_title")
+  status            String   @default("published")
+  agentId           Int?     @map("agent_id")
+  views             Int      @default(0)
+  source            String   @default("")
+  sourceUrl         String   @default("") @map("source_url")
+  sourceReference   String   @default("") @map("source_reference")
+  seoTitle          String   @default("") @map("seo_title")
+  seoDescription    String   @default("") @map("seo_description")
+  ogImage           String   @default("") @map("og_image")
+  noindex           Boolean  @default(false)
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @default(now()) @map("updated_at")
+
+  @@map("properties")
+}
+
+model ArticleCategory {
+  id          Int    @id @default(autoincrement())
+  name        String
+  slug        String @unique
+  description String @default("")
+  image       String @default("")
+  position    Int    @default(0)
+
+  @@map("article_categories")
+}
+
+model Article {
+  id             Int       @id @default(autoincrement())
+  slug           String    @unique
+  title          String
+  excerpt        String    @default("")
+  content        String    @default("")
+  image          String    @default("")
+  categoryId     Int?      @map("category_id")
+  authorId       Int?      @map("author_id")
+  authorName     String    @default("") @map("author_name")
+  tags           String    @default("[]")
+  status         String    @default("brouillon")
+  publishedAt    DateTime? @map("published_at")
+  seoTitle       String    @default("") @map("seo_title")
+  seoDescription String    @default("") @map("seo_description")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @default(now()) @map("updated_at")
+
+  @@map("articles")
+}
+
+model Service {
+  id               Int     @id @default(autoincrement())
+  slug             String  @unique
+  name             String
+  nameEn           String  @default("") @map("name_en")
+  shortDescription String  @default("") @map("short_description")
+  description      String  @default("")
+  descriptionEn    String  @default("") @map("description_en")
+  icon             String  @default("🏠")
+  image            String  @default("")
+  position         Int     @default(0)
+  published        Boolean @default(true)
+
+  @@map("services")
+}
+
+model Testimonial {
+  id        Int      @id @default(autoincrement())
+  name      String
+  photo     String   @default("")
+  content   String
+  location  String   @default("")
+  rating    Int      @default(5)
+  isDemo    Boolean  @default(false) @map("is_demo")
+  published Boolean  @default(true)
+  position  Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("testimonials")
+}
+
+model TeamMember {
+  id        Int     @id @default(autoincrement())
+  name      String
+  role      String  @default("Courtier immobilier")
+  photo     String  @default("")
+  bio       String  @default("")
+  phone     String  @default("")
+  email     String  @default("")
+  position  Int     @default(0)
+  published Boolean @default(true)
+
+  @@map("team_members")
+}
+
+model GalleryItem {
+  id        Int      @id @default(autoincrement())
+  image     String
+  title     String   @default("")
+  caption   String   @default("")
+  alt       String   @default("")
+  category  String   @default("Général")
+  position  Int      @default(0)
+  published Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("gallery_items")
+}
+
+model HomepageSection {
+  id        Int     @id @default(autoincrement())
+  blockType String  @map("block_type")
+  title     String  @default("")
+  subtitle  String  @default("")
+  config    String  @default("{}")
+  position  Int     @default(0)
+  enabled   Boolean @default(true)
+
+  @@map("homepage_sections")
+}
+
+model Media {
+  id            Int      @id @default(autoincrement())
+  filename      String
+  url           String
+  thumbnailUrl  String   @default("") @map("thumbnail_url")
+  mimeType      String   @default("image/webp") @map("mime_type")
+  width         Int      @default(0)
+  height        Int      @default(0)
+  originalSize  Int      @default(0) @map("original_size")
+  optimizedSize Int      @default(0) @map("optimized_size")
+  alt           String   @default("")
+  folder        String   @default("general")
+  uploadedBy    Int?     @map("uploaded_by")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@map("media")
+}
+
+model Customer {
+  id        Int      @id @default(autoincrement())
+  name      String
+  phone     String   @default("")
+  email     String   @default("")
+  notes     String   @default("")
+  agentId   Int?     @map("agent_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("customers")
+}
+
+model Request {
+  id                Int      @id @default(autoincrement())
+  name              String
+  phone             String   @default("")
+  email             String   @default("")
+  message           String   @default("")
+  requestType       String   @default("information") @map("request_type")
+  propertyId        Int?     @map("property_id")
+  propertyTitle     String   @default("") @map("property_title")
+  propertyReference String   @default("") @map("property_reference")
+  customerId        Int?     @map("customer_id")
+  source            String   @default("site")
+  sourcePage        String   @default("") @map("source_page")
+  status            String   @default("nouvelle")
+  agentId           Int?     @map("agent_id")
+  internalNotes     String   @default("") @map("internal_notes")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @default(now()) @map("updated_at")
+
+  @@map("requests")
+}
+
+model Appointment {
+  id            Int      @id @default(autoincrement())
+  customerName  String   @map("customer_name")
+  customerPhone String   @default("") @map("customer_phone")
+  customerId    Int?     @map("customer_id")
+  propertyId    Int?     @map("property_id")
+  propertyTitle String   @default("") @map("property_title")
+  scheduledAt   DateTime @map("scheduled_at")
+  location      String   @default("")
+  agentId       Int?     @map("agent_id")
+  notes         String   @default("")
+  status        String   @default("demande")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@map("appointments")
+}
+
+model SiteSetting {
+  key       String   @id
+  value     String   @default("{}")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@map("site_settings")
+}
+
+model Faq {
+  id        Int     @id @default(autoincrement())
+  question  String
+  answer    String
+  category  String  @default("Général")
+  position  Int     @default(0)
+  published Boolean @default(true)
+
+  @@map("faqs")
+}
+
+model AiKnowledge {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  keywords  String   @default("[]")
+  category  String   @default("Général")
+  published Boolean  @default(true)
+  position  Int      @default(0)
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@map("ai_knowledge")
+}
+
+model AiConversation {
+  id           Int      @id @default(autoincrement())
+  sessionId    String   @map("session_id")
+  summary      String   @default("")
+  propertyId   Int?     @map("property_id")
+  messageCount Int      @default(0) @map("message_count")
+  converted    Boolean  @default(false)
+  status       String   @default("active")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("ai_conversations")
+}
+
+model AiMessage {
+  id             Int      @id @default(autoincrement())
+  conversationId Int      @map("conversation_id")
+  role           String
+  content        String
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@map("ai_messages")
+}
+
+model ActivityLog {
+  id         Int      @id @default(autoincrement())
+  userId     Int?     @map("user_id")
+  username   String   @default("")
+  action     String
+  resource   String   @default("")
+  resourceId String   @default("") @map("resource_id")
+  detail     String   @default("")
+  ip         String   @default("")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("activity_log")
+}
+
+model AnalyticsEvent {
+  id         Int      @id @default(autoincrement())
+  eventType  String   @map("event_type")
+  propertyId Int?     @map("property_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("analytics_events")
+}
+
+model MediaBlob {
+  key         String   @id
+  contentType String   @default("image/webp") @map("content_type")
+  data        Bytes
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("media_blobs")
+}
